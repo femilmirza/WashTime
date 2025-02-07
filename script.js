@@ -1,27 +1,37 @@
-// script.js
+// script.js (with Firebase)
 class WashTime {
     constructor() {
         this.slotsContainer = document.getElementById('slotsContainer');
         this.todaySlotContainer = document.getElementById('todaySlot');
-        this.initStorage();
-        this.render();
-        this.showTodaySlot();
+        this.slotsRef = firebase.database().ref('slots');  // Reference to Firebase
+
+        this.setupDatabaseListener();
     }
 
-    initStorage() {
-        if (!localStorage.getItem('slots')) {
-            const slots = [
-                { day: "Monday", booked: false, user: "" },
-                { day: "Tuesday", booked: false, user: "" },
-                { day: "Wednesday", booked: false, user: "" },
-                { day: "Thursday", booked: false, user: "" },
-                { day: "Friday", booked: false, user: "" },
-                { day: "Saturday", booked: false, user: "" },
-                { day: "Sunday", booked: false, user: "" }
-            ];
-            localStorage.setItem('slots', JSON.stringify(slots));
-        }
-        this.slots = JSON.parse(localStorage.getItem('slots'));
+    setupDatabaseListener() {
+        // Listen for changes in the database and update UI
+        this.slotsRef.on('value', snapshot => {
+            if (snapshot.exists()) {
+                this.slots = snapshot.val();
+            } else {
+                this.initializeSlots();  // Initialize if no data exists
+            }
+            this.render();
+            this.showTodaySlot();
+        });
+    }
+
+    initializeSlots() {
+        const slots = [
+            { day: "Monday", booked: false, user: "" },
+            { day: "Tuesday", booked: false, user: "" },
+            { day: "Wednesday", booked: false, user: "" },
+            { day: "Thursday", booked: false, user: "" },
+            { day: "Friday", booked: false, user: "" },
+            { day: "Saturday", booked: false, user: "" },
+            { day: "Sunday", booked: false, user: "" }
+        ];
+        this.slotsRef.set(slots);
     }
 
     render() {
@@ -64,9 +74,8 @@ class WashTime {
         this.slots[index].booked = true;
         this.slots[index].user = userName;
 
-        localStorage.setItem('slots', JSON.stringify(this.slots));
-        this.render();
-        this.showTodaySlot();
+        // Update the slot in Firebase
+        this.slotsRef.set(this.slots);
     }
 
     showTodaySlot() {
@@ -107,8 +116,7 @@ function bookNextAvailableSlot() {
 
 function resetBookings() {
     if (confirm('Are you sure you want to reset all bookings for this week?')) {
-        localStorage.removeItem('slots');
-        new WashTime();  // Re-initialize the app
+        firebase.database().ref('slots').remove();  // Clear slots in Firebase
     }
 }
 
