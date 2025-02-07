@@ -1,0 +1,119 @@
+/* styles.css */
+
+/* Minimalistic Variables */
+:root {
+    --primary: #333;
+    --secondary: #007BFF;
+    --success: #28a745;
+    --danger: #dc3545;
+    --background: #f9f9f9;
+    --white: #ffffff;
+    --border-radius: 10px;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background);
+    margin: 0;
+    padding: 20px;
+    color: var(--primary);
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: var(--white);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+h1 {
+    font-size: 2em;
+    color: var(--secondary);
+    margin-bottom: 20px;
+}
+
+.user-input {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.user-input select, .book-btn, .reset-btn {
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--secondary);
+    font-size: 1em;
+    cursor: pointer;
+    background: var(--white);
+}
+
+.user-input select {
+    width: 50%;
+}
+
+.book-btn {
+    background: var(--success);
+    color: var(--white);
+    border: none;
+}
+
+.reset-btn {
+    background: var(--danger);
+    color: var(--white);
+    border: none;
+}
+
+.book-btn:hover, .reset-btn:hover {
+    opacity: 0.9;
+}
+
+/* Today's Slot Section */
+.today-slot {
+    background: var(--secondary);
+    color: var(--white);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    font-weight: bold;
+    box-shadow: var(--shadow);
+}
+
+/* Slot Table */
+.slots-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.slots-table th, .slots-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.slots-table th {
+    background: var(--secondary);
+    color: var(--white);
+    font-weight: bold;
+}
+
+.slots-table tr:nth-child(even) {
+    background: #f4f4f4;
+}
+
+.status-vacant {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.status-booked {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+.booked-by {
+    color: var(--primary);
+}
