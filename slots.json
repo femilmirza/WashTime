@@ -1,0 +1,10 @@
+[
+    { "day": "Monday", "booked": false, "user": "" },
+    { "day": "Tuesday", "booked": false, "user": "" },
+    { "day": "Wednesday", "booked": false, "user": "" },
+    { "day": "Thursday", "booked": false, "user": "" },
+    { "day": "Friday", "booked": false, "user": "" },
+    { "day": "Saturday", "booked": false, "user": "" },
+    { "day": "Sunday", "booked": false, "user": "" }
+  ]
+  

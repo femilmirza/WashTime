@@ -1,27 +1,32 @@
 // script.js
+
 class WashTime {
-    constructor() {
+    constructor(dataLoadedCallback) {
         this.slotsContainer = document.getElementById('slotsContainer');
         this.todaySlotContainer = document.getElementById('todaySlot');
         this.slotsRef = firebase.database().ref('slots');  // Reference to Firebase Realtime Database
 
-        this.listenForUpdates();  // Listen for real-time updates
+        this.listenForUpdates(dataLoadedCallback);  // Listen for real-time updates and call callback when data is loaded
     }
 
-    // Listen for real-time database updates
-    listenForUpdates() {
+    // Listen for real-time updates and run the callback after data is loaded
+    listenForUpdates(callback) {
         this.slotsRef.on('value', snapshot => {
             if (snapshot.exists()) {
                 this.slots = snapshot.val();
             } else {
                 this.initializeSlots();  // Initialize slots if no data exists
             }
+
             this.render();
             this.showTodaySlot();
+
+            // Call the callback function after slots are loaded
+            if (callback) callback(this.slots);
         });
     }
 
-    // Initialize default slots in Firebase
+    // Initialize default slots in Firebase if not present
     initializeSlots() {
         const slots = [
             { day: "Monday", booked: false, user: "" },
@@ -37,6 +42,9 @@ class WashTime {
 
     // Render booking table in the UI
     render() {
+        // Preserve the selected user name
+        const selectedUserName = document.getElementById('userName').value;
+
         this.slotsContainer.innerHTML = '';
 
         this.slots.forEach((slot, index) => {
@@ -58,6 +66,9 @@ class WashTime {
 
             this.slotsContainer.appendChild(row);
         });
+
+        // Restore the selected user name after re-rendering
+        document.getElementById('userName').value = selectedUserName;
     }
 
     // Book a slot and save to Firebase
@@ -94,7 +105,7 @@ class WashTime {
     }
 }
 
-// Book the next available slot using the button
+// Book the next available slot only after data is loaded
 function bookNextAvailableSlot() {
     const userName = document.getElementById('userName').value;
     if (!userName) {
@@ -102,20 +113,24 @@ function bookNextAvailableSlot() {
         return;
     }
 
-    const app = new WashTime();
-    const userBookings = app.slots.filter(slot => slot.user === userName).length;
-    if (userBookings >= 2) {
-        alert('You can only book a maximum of 2 slots per week.');
-        return;
-    }
+    // Initialize WashTime with a callback to ensure data is loaded
+    new WashTime((slots) => {
+        const userBookings = slots.filter(slot => slot.user === userName).length;
+        if (userBookings >= 2) {
+            alert('You can only book a maximum of 2 slots per week.');
+            return;
+        }
 
-    const nextAvailableIndex = app.slots.findIndex(slot => !slot.booked);
-    if (nextAvailableIndex === -1) {
-        alert('No available slots left to book.');
-        return;
-    }
+        const nextAvailableIndex = slots.findIndex(slot => !slot.booked);
+        if (nextAvailableIndex === -1) {
+            alert('No available slots left to book.');
+            return;
+        }
 
-    app.bookSlot(nextAvailableIndex);
+        // Create a new WashTime instance to book the slot
+        const app = new WashTime();
+        app.bookSlot(nextAvailableIndex);
+    });
 }
 
 // Reset all bookings in Firebase
