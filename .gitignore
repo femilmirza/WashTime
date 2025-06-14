@@ -1,0 +1,15 @@
+# Ignore local environment variables
+.env
+
+# Node.js
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
